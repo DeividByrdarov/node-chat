@@ -5,6 +5,16 @@ export default gql`
     id: ID!
     email: String!
     username: String!
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type Message {
+    id: ID!
+    sender: String!
+    text: String!
+    createdAt: String!
+    updatedAt: String!
   }
 
   type RegisterResponse {
@@ -25,11 +35,17 @@ export default gql`
   }
 
   type Query {
+    login(email: String!, password: String!): LoginResponse!
+    getMessages: [Message!]!
+  }
+
+  type Mutation {
     register(
       email: String!
       username: String!
       password: String!
     ): RegisterResponse!
-    login(email: String!, password: String!): LoginResponse!
+
+    createMessage(sender: String!, text: String!): Boolean!
   }
 `
