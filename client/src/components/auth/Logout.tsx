@@ -1,6 +1,7 @@
 import * as React from "react"
-import { Context } from "../Context"
 import { RouteComponentProps } from "react-router"
+
+import { Context } from "../../Context"
 
 class Logout extends React.Component<RouteComponentProps> {
   render() {

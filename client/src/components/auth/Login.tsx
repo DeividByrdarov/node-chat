@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router"
 import gql from "graphql-tag"
 import { Mutation, MutationFn } from "react-apollo"
 import { OperationVariables, FetchResult } from "apollo-boost"
-import { Context } from "../Context"
+import { Context } from "../../Context"
 
 const LOGIN_MUTATION = gql`
   mutation login($email: String!, $password: String!) {

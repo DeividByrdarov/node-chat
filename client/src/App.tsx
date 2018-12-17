@@ -5,8 +5,9 @@ import { ApolloProvider } from "react-apollo"
 
 import ContextProvider from "./Context"
 import Home from "./components/Home"
-import Login from "./components/Login"
-import Logout from "./components/Logout"
+import Login from "./components/auth/Login"
+import Register from "./components/auth/Register"
+import Logout from "./components/auth/Logout"
 
 const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
@@ -21,6 +22,7 @@ class App extends React.Component {
             <Switch>
               <Route exact path="/" component={Home} />
               <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
               <Route path="/logout" component={Logout} />
             </Switch>
           </Router>
