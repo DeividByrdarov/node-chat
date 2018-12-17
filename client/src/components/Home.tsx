@@ -60,6 +60,23 @@ const BodyMessage = styled.div`
   margin-top: 0.5rem;
 `
 
+const LogoutButton = styled.button`
+  height: 40px;
+  width: 100px;
+  margin-bottom: 10px;
+  outline: 0;
+  border: 0;
+  background-color: #7ed6df;
+  border-radius: 100px;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.4) 3px 3px;
+
+  &:active {
+    box-shadow: none;
+    transform: translateX(3px) translateY(3px);
+  }
+`
+
 const colorBasedOnBg = (bgColor: string, dark: string, light: string) => {
   const r = parseInt(bgColor.substr(1, 2), 16)
   const g = parseInt(bgColor.substr(3, 2), 16)
@@ -90,51 +107,63 @@ class Home extends React.Component<RouteComponentProps> {
     )
   }
 
+  _logout = () => {
+    this.props.history.push("/logout")
+  }
+
   render() {
     return (
-      <Context.Consumer>
-        {({ user }) => {
-          if (!user) {
-            this.props.history.replace("/login")
-          }
+      <div>
+        <LogoutButton onClick={this._logout}>Logout</LogoutButton>
+        <Context.Consumer>
+          {({ user }) => {
+            if (!user) {
+              this.props.history.replace("/login")
+            }
 
-          return (
-            <Query query={GET_MESSAGES_QUERY}>
-              {({ loading, error, data: { getMessages }, subscribeToMore }) => {
-                if (loading) return <h1>loading...</h1>
-                if (error) return <div>Error: {error}</div>
+            return (
+              <Query query={GET_MESSAGES_QUERY}>
+                {({
+                  loading,
+                  error,
+                  data: { getMessages },
+                  subscribeToMore,
+                }) => {
+                  if (loading) return <h1>loading...</h1>
+                  if (error) return <div>Error: {error}</div>
 
-                subscribeToMore({
-                  document: MESSAGE_CREATED_SUBSCRIPTION,
-                  updateQuery: (prev, { subscriptionData }) => {
-                    if (!subscriptionData.data) return prev
-                    const newFeedItem = subscriptionData.data.messageCreated
-                    newFeedItem.createdAt = new Date(
-                      parseInt(newFeedItem.createdAt)
-                    ).toISOString()
+                  subscribeToMore({
+                    document: MESSAGE_CREATED_SUBSCRIPTION,
+                    updateQuery: (prev, { subscriptionData }) => {
+                      if (!subscriptionData.data) return prev
+                      const newFeedItem = subscriptionData.data.messageCreated
+                      newFeedItem.createdAt = new Date(
+                        parseInt(newFeedItem.createdAt)
+                      ).toISOString()
 
-                    return Object.assign({}, prev, {
-                      getMessages: [...prev.getMessages, newFeedItem],
-                    })
-                  },
-                })
+                      return Object.assign({}, prev, {
+                        getMessages: [...prev.getMessages, newFeedItem],
+                      })
+                    },
+                  })
 
-                return (
-                  <div>
-                    {getMessages.length > 0 ? (
-                      getMessages.map(this._renderMessage)
-                    ) : (
-                      <h3>No messages</h3>
-                    )}
+                  return (
+                    <div>
+                      {getMessages.length > 0 ? (
+                        getMessages.map(this._renderMessage)
+                      ) : (
+                        <h3>No messages</h3>
+                      )}
 
-                    <Form user={user} />
-                  </div>
-                )
-              }}
-            </Query>
-          )
-        }}
-      </Context.Consumer>
+                      <Form user={user} />
+                    </div>
+                  )
+                }}
+              </Query>
+            )
+          }}
+        </Context.Consumer>
+      </div>
     )
   }
 }
