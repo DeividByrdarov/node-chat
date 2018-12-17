@@ -66,6 +66,7 @@ export default {
       }
     },
     createMessage: async (parent, { sender, text }, ctx) => {
+      if (!text) return false
       const message = await Message.create({ sender, text })
       let messageWithSender = await message.populate("sender").execPopulate()
 

@@ -61,6 +61,8 @@ class Form extends React.Component<{
     e.preventDefault()
     const { text } = this.state
 
+    if (!text) return
+
     const response = await createMessage({
       variables: {
         sender: this.props.user,
