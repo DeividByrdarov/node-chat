@@ -1,5 +1,4 @@
 import * as React from "react"
-import moment from "moment"
 import { RouteComponentProps } from "react-router"
 import { Query } from "react-apollo"
 
@@ -7,6 +6,7 @@ import { Context } from "../Context"
 import gql from "graphql-tag"
 import Form from "./messages/Form"
 import styled from "styled-components"
+import Messages from "./messages/Messages"
 
 const GET_MESSAGES_QUERY = gql`
   query getMessages {
@@ -40,26 +40,6 @@ const MESSAGE_CREATED_SUBSCRIPTION = gql`
   }
 `
 
-const Message = styled.div<any>`
-  padding: 10px;
-  background: ${props => props.bgColor};
-  border-radius: 4px;
-  margin-bottom: 5px;
-  color: ${props => colorBasedOnBg(props.bgColor, "black", "white")};
-`
-
-const HeadMessage = styled.div<any>`
-  font-size: 16px;
-  small {
-    font-size: 12px;
-    color: ${props => colorBasedOnBg(props.bgColor, "#444", "#ccc")};
-  }
-`
-
-const BodyMessage = styled.div`
-  margin-top: 0.5rem;
-`
-
 const LogoutButton = styled.button`
   height: 40px;
   width: 100px;
@@ -77,36 +57,7 @@ const LogoutButton = styled.button`
   }
 `
 
-const colorBasedOnBg = (bgColor: string, dark: string, light: string) => {
-  const r = parseInt(bgColor.substr(1, 2), 16)
-  const g = parseInt(bgColor.substr(3, 2), 16)
-  const b = parseInt(bgColor.substr(5, 2), 16)
-  const yiq = (r * 299 + g * 587 + b * 114) / 1000
-  return yiq >= 128 ? dark : light
-}
-
 class Home extends React.Component<RouteComponentProps> {
-  _renderMessage = (message: any) => {
-    const now = moment()
-    const date = moment(message.createdAt)
-
-    const duration = moment.duration(now.diff(date, "hours"))
-
-    return (
-      <Message key={message.id} bgColor={message.sender.color}>
-        <HeadMessage bgColor={message.sender.color}>
-          {message.sender.username}{" "}
-          <small>
-            {duration.days() > 0
-              ? date.format("YYYY-MM-DD HH:mm")
-              : date.fromNow()}
-          </small>
-        </HeadMessage>
-        <BodyMessage>{message.text}</BodyMessage>
-      </Message>
-    )
-  }
-
   _logout = () => {
     this.props.history.push("/logout")
   }
@@ -132,28 +83,25 @@ class Home extends React.Component<RouteComponentProps> {
                   if (loading) return <h1>loading...</h1>
                   if (error) return <div>Error: {error}</div>
 
-                  subscribeToMore({
-                    document: MESSAGE_CREATED_SUBSCRIPTION,
-                    updateQuery: (prev, { subscriptionData }) => {
-                      if (!subscriptionData.data) return prev
-                      const newFeedItem = subscriptionData.data.messageCreated
-                      newFeedItem.createdAt = new Date(
-                        parseInt(newFeedItem.createdAt)
-                      ).toISOString()
+                  const more = () =>
+                    subscribeToMore({
+                      document: MESSAGE_CREATED_SUBSCRIPTION,
+                      updateQuery: (prev, { subscriptionData }) => {
+                        if (!subscriptionData.data) return prev
+                        const newFeedItem = subscriptionData.data.messageCreated
+                        newFeedItem.createdAt = new Date(
+                          parseInt(newFeedItem.createdAt)
+                        ).toISOString()
 
-                      return Object.assign({}, prev, {
-                        getMessages: [...prev.getMessages, newFeedItem],
-                      })
-                    },
-                  })
+                        return Object.assign({}, prev, {
+                          getMessages: [...prev.getMessages, newFeedItem],
+                        })
+                      },
+                    })
 
                   return (
                     <div>
-                      {getMessages.length > 0 ? (
-                        getMessages.map(this._renderMessage)
-                      ) : (
-                        <h3>No messages</h3>
-                      )}
+                      <Messages data={getMessages} subscribeToMore={more} />
 
                       <Form user={user} />
                     </div>
