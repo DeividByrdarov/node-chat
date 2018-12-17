@@ -13,7 +13,7 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 90% 10%;
   grid-gap: 5px;
-  padding: 0 5px 0 0;
+  padding: 10px 5px 0 0;
   width: 100%;
   input, button {
     width: 100%

@@ -11,7 +11,13 @@ export default {
         .populate("sender")
         .exec()
 
-      return messages
+      return messages.map(message => ({
+        id: message._id.toString(),
+        text: message.text,
+        sender: message.sender,
+        createdAt: new Date(message.createdAt).toISOString(),
+        updatedAt: new Date(message.updatedAt).toISOString(),
+      }))
     },
   },
   Mutation: {
