@@ -48,4 +48,8 @@ export default gql`
 
     createMessage(sender: String!, text: String!): Boolean!
   }
+
+  type Subscription {
+    messageCreated: Message
+  }
 `

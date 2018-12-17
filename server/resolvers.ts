@@ -1,8 +1,10 @@
 import User from "./models/User"
 import { hash, compare } from "bcrypt"
 import Message from "./models/Message"
+import pubsub from "./config/PubSub"
 
 const HASH_SALT = 10
+const MESSAGE_CREATED = "MESSAGE_CREATED"
 
 export default {
   Query: {
@@ -63,9 +65,18 @@ export default {
       }
     },
     createMessage: async (parent, { sender, text }, ctx) => {
-      await Message.create({ sender, text })
+      const message = await Message.create({ sender, text })
+      const messageWithSender = await message.populate("sender").execPopulate()
+
+      pubsub.publish(MESSAGE_CREATED, { messageCreated: messageWithSender })
 
       return true
+    },
+  },
+
+  Subscription: {
+    messageCreated: {
+      subscribe: () => pubsub.asyncIterator(MESSAGE_CREATED),
     },
   },
 }

@@ -1,4 +1,5 @@
 import * as express from "express"
+import { createServer } from "http"
 import { ApolloServer } from "apollo-server-express"
 
 import typeDefs from "./schema"
@@ -17,4 +18,9 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app })
 
-app.listen(port, () => console.log(`Server listening on port ${port}`))
+const httpServer = createServer(app)
+server.installSubscriptionHandlers(httpServer)
+
+httpServer.listen({ port: 4000 }, () => {
+  console.log(`Server listening on port ${port}`)
+})
