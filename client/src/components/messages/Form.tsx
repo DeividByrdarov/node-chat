@@ -2,6 +2,7 @@ import * as React from "react"
 import { Mutation, MutationFn, OperationVariables } from "react-apollo"
 import gql from "graphql-tag"
 import styled from "styled-components"
+import Messages from "./Messages"
 
 const CREATE_MESSAGE_MUTATION = gql`
   mutation createMessage($sender: String!, $text: String!) {
@@ -50,6 +51,7 @@ const Container = styled.div`
 
 class Form extends React.Component<{
   user: string
+  scrollToBottom: Function
 }> {
   state = {
     text: "",
@@ -80,6 +82,7 @@ class Form extends React.Component<{
     if (response) {
       if (response.data.createMessage) {
         this.setState({ text: "" })
+        this.props.scrollToBottom()
       }
     }
   }
@@ -91,6 +94,7 @@ class Form extends React.Component<{
           <form onSubmit={e => this._onSubmit(e, createMessage)}>
             <Container>
               <input
+                autoFocus
                 type="text"
                 name="text"
                 placeholder="Start chatting..."

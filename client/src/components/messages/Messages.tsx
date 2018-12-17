@@ -39,17 +39,27 @@ const colorBasedOnBg = (bgColor: string, dark: string, light: string) => {
 class Messages extends React.Component<{
   data: any
   subscribeToMore: Function
+  setScrollToBottom: Function
 }> {
   containerRef: React.RefObject<HTMLDivElement>
 
-  constructor(props: { data: any; subscribeToMore: Function }) {
+  constructor(props: {
+    data: any
+    subscribeToMore: Function
+    setScrollToBottom: Function
+  }) {
     super(props)
 
     this.containerRef = React.createRef()
+    props.setScrollToBottom(this._scrollToBottom)
   }
 
   componentDidMount() {
     this.props.subscribeToMore()
+    this._scrollToBottom()
+  }
+
+  _scrollToBottom = () => {
     if (this.containerRef.current)
       this.containerRef.current.scrollTop = this.containerRef.current.scrollHeight
   }
@@ -76,7 +86,6 @@ class Messages extends React.Component<{
   }
 
   render() {
-    console.log(this.containerRef)
     return this.props.data.length > 0 ? (
       <Container ref={this.containerRef}>
         {this.props.data.map(this._renderMessage)}

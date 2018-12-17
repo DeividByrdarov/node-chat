@@ -59,6 +59,10 @@ const LogoutButton = styled.button`
 `
 
 class Home extends React.Component<RouteComponentProps> {
+  state = {
+    scrollToBottom: () => {},
+  }
+
   _logout = () => {
     this.props.history.push("/logout")
   }
@@ -102,9 +106,18 @@ class Home extends React.Component<RouteComponentProps> {
 
                   return (
                     <div>
-                      <Messages data={getMessages} subscribeToMore={more} />
+                      <Messages
+                        data={getMessages}
+                        subscribeToMore={more}
+                        setScrollToBottom={(func: Function) =>
+                          this.setState({ scrollToBottom: func })
+                        }
+                      />
 
-                      <Form user={user} />
+                      <Form
+                        user={user}
+                        scrollToBottom={this.state.scrollToBottom}
+                      />
                     </div>
                   )
                 }}
