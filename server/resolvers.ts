@@ -51,6 +51,7 @@ export default {
           email,
           username,
           password: await hash(password, HASH_SALT),
+          color: "#" + (((1 << 24) * Math.random()) | 0).toString(16),
         })
       } catch (err) {
         return {
@@ -66,7 +67,13 @@ export default {
     },
     createMessage: async (parent, { sender, text }, ctx) => {
       const message = await Message.create({ sender, text })
-      const messageWithSender = await message.populate("sender").execPopulate()
+      let messageWithSender = await message.populate("sender").execPopulate()
+
+      messageWithSender.id = messageWithSender._id.toString(),
+      messageWithSender.text = messageWithSender.text,
+      messageWithSender.sender = messageWithSender.sender,
+      messageWithSender.createdAt = new Date(messageWithSender.createdAt).toISOString(),
+      messageWithSender.updatedAt = new Date(messageWithSender.updatedAt).toISOString(),
 
       pubsub.publish(MESSAGE_CREATED, { messageCreated: messageWithSender })
 

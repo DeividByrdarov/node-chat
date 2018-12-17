@@ -4,8 +4,8 @@ interface IMessage extends Document {
   id: string
   sender: string
   text: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date | string
+  updatedAt: Date | string
 }
 
 const schema = new Schema(

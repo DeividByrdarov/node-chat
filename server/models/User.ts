@@ -4,6 +4,7 @@ interface IUser extends mongoose.Document {
   id: string
   username: string
   email: string
+  color: string
   password: string
   createdAt: Date
   updatedAt: Date
@@ -21,6 +22,10 @@ const schema = new mongoose.Schema(
       unique: true,
     },
     password: {
+      type: String,
+      required: true,
+    },
+    color: {
       type: String,
       required: true,
     },

@@ -43,7 +43,6 @@ const Container = styled.div`
 
 class Form extends React.Component<{
   user: string
-  pushMessage: (text: string) => void
 }> {
   state = {
     text: "",
@@ -71,7 +70,6 @@ class Form extends React.Component<{
 
     if (response) {
       if (response.data.createMessage) {
-        this.props.pushMessage(text)
         this.setState({ text: "" })
       }
     }

@@ -16,6 +16,7 @@ const GET_MESSAGES_QUERY = gql`
         id
         email
         username
+        color
       }
       text
       createdAt
@@ -23,16 +24,35 @@ const GET_MESSAGES_QUERY = gql`
   }
 `
 
-const Message = styled.div`
-  padding: 10px;
-  border-bottom: 1px solid black;
+const MESSAGE_CREATED_SUBSCRIPTION = gql`
+  subscription {
+    messageCreated {
+      id
+      sender {
+        id
+        email
+        username
+        color
+      }
+      text
+      createdAt
+    }
+  }
 `
 
-const HeadMessage = styled.div`
+const Message = styled.div<any>`
+  padding: 10px;
+  background: ${props => props.bgColor};
+  border-radius: 4px;
+  margin-bottom: 5px;
+  color: ${props => colorBasedOnBg(props.bgColor, "black", "white")};
+`
+
+const HeadMessage = styled.div<any>`
   font-size: 16px;
   small {
     font-size: 12px;
-    color: grey;
+    color: ${props => colorBasedOnBg(props.bgColor, "#444", "#ccc")};
   }
 `
 
@@ -40,11 +60,15 @@ const BodyMessage = styled.div`
   margin-top: 0.5rem;
 `
 
-class Home extends React.Component<RouteComponentProps> {
-  _pushMessage = async (text: string) => {
-    console.log(text)
-  }
+const colorBasedOnBg = (bgColor: string, dark: string, light: string) => {
+  const r = parseInt(bgColor.substr(1, 2), 16)
+  const g = parseInt(bgColor.substr(3, 2), 16)
+  const b = parseInt(bgColor.substr(5, 2), 16)
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000
+  return yiq >= 128 ? dark : light
+}
 
+class Home extends React.Component<RouteComponentProps> {
   _renderMessage = (message: any) => {
     const now = moment()
     const date = moment(message.createdAt)
@@ -52,8 +76,8 @@ class Home extends React.Component<RouteComponentProps> {
     const duration = moment.duration(now.diff(date, "hours"))
 
     return (
-      <Message key={message.id}>
-        <HeadMessage>
+      <Message key={message.id} bgColor={message.sender.color}>
+        <HeadMessage bgColor={message.sender.color}>
           {message.sender.username}{" "}
           <small>
             {duration.days() > 0
@@ -76,9 +100,24 @@ class Home extends React.Component<RouteComponentProps> {
 
           return (
             <Query query={GET_MESSAGES_QUERY}>
-              {({ loading, error, data: { getMessages } }) => {
+              {({ loading, error, data: { getMessages }, subscribeToMore }) => {
                 if (loading) return <h1>loading...</h1>
                 if (error) return <div>Error: {error}</div>
+
+                subscribeToMore({
+                  document: MESSAGE_CREATED_SUBSCRIPTION,
+                  updateQuery: (prev, { subscriptionData }) => {
+                    if (!subscriptionData.data) return prev
+                    const newFeedItem = subscriptionData.data.messageCreated
+                    newFeedItem.createdAt = new Date(
+                      parseInt(newFeedItem.createdAt)
+                    ).toISOString()
+
+                    return Object.assign({}, prev, {
+                      getMessages: [...prev.getMessages, newFeedItem],
+                    })
+                  },
+                })
 
                 return (
                   <div>
@@ -88,7 +127,7 @@ class Home extends React.Component<RouteComponentProps> {
                       <h3>No messages</h3>
                     )}
 
-                    <Form user={user} pushMessage={this._pushMessage} />
+                    <Form user={user} />
                   </div>
                 )
               }}

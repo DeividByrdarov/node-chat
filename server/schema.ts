@@ -5,6 +5,7 @@ export default gql`
     id: ID!
     email: String!
     username: String!
+    color: String!
     createdAt: String!
     updatedAt: String!
   }
