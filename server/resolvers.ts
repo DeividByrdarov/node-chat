@@ -6,6 +6,19 @@ const HASH_SALT = 10
 
 export default {
   Query: {
+    getMessages: async () => {
+      const messages = await Message.find({})
+
+      return messages.map(message => ({
+        id: message._id.toString(),
+        sender: message.sender.toString(),
+        text: message.text,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+      }))
+    },
+  },
+  Mutation: {
     login: async (parent, { email, password }, ctx) => {
       const user = await User.findOne({ email })
 
@@ -26,19 +39,6 @@ export default {
         ],
       }
     },
-    getMessages: async () => {
-      const messages = await Message.find({})
-
-      return messages.map(message => ({
-        id: message._id.toString(),
-        sender: message.sender.toString(),
-        text: message.text,
-        createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
-      }))
-    },
-  },
-  Mutation: {
     register: async (parent, { email, username, password }, ctx) => {
       let user
 

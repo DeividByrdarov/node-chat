@@ -35,11 +35,11 @@ export default gql`
   }
 
   type Query {
-    login(email: String!, password: String!): LoginResponse!
     getMessages: [Message!]!
   }
 
   type Mutation {
+    login(email: String!, password: String!): LoginResponse!
     register(
       email: String!
       username: String!
