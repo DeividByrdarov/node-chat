@@ -50,6 +50,7 @@ const LogoutButton = styled.button`
   border-radius: 100px;
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.4) 3px 3px;
+  font-size: 1rem;
 
   &:active {
     box-shadow: none;

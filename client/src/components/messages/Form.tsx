@@ -38,6 +38,13 @@ const Container = styled.div`
   button {
     border-radius: 6px;
     background: white;
+    outline: 0;
+  }
+  
+  @media screen and (max-width: 1024px) {
+    & {
+      grid-template-columns: 70% 30%;
+    }
   }
 `
 
