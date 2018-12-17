@@ -4,6 +4,7 @@ import { RouteComponentProps } from "react-router"
 import { Mutation, MutationFn } from "react-apollo"
 import gql from "graphql-tag"
 import { OperationVariables } from "apollo-boost"
+import { Form, Container, FormGroup, Submit, RegisterLink } from "./Login"
 
 const REGISTER_MUTATION = gql`
   mutation register($username: String!, $email: String!, $password: String!) {
@@ -71,40 +72,46 @@ class Register extends React.Component<RouteComponentProps> {
           return (
             <Mutation mutation={REGISTER_MUTATION}>
               {register => (
-                <form onSubmit={e => this._onSubmit(e, register, updateUser)}>
-                  <div>
-                    <label htmlFor="username">Username:</label>
-                    <input
-                      type="text"
-                      id="username"
-                      name="username"
-                      value={this.state.username}
-                      onChange={this._onChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email">Email:</label>
-                    <input
-                      type="text"
-                      id="email"
-                      name="email"
-                      value={this.state.email}
-                      onChange={this._onChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="password">Password:</label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={this.state.password}
-                      onChange={this._onChange}
-                    />
-                  </div>
+                <Form onSubmit={e => this._onSubmit(e, register, updateUser)}>
+                  <Container>
+                    <FormGroup>
+                      <label htmlFor="username">Username</label>
+                      <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value={this.state.username}
+                        onChange={this._onChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <label htmlFor="email">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={this.state.email}
+                        onChange={this._onChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <label htmlFor="password">Password</label>
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={this.state.password}
+                        onChange={this._onChange}
+                      />
+                    </FormGroup>
 
-                  <input type="submit" value="Register" />
-                </form>
+                    <RegisterLink to="/login">
+                      Already have account? Login!
+                    </RegisterLink>
+
+                    <Submit type="submit">Register</Submit>
+                  </Container>
+                </Form>
               )}
             </Mutation>
           )

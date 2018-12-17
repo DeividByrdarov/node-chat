@@ -25,6 +25,7 @@ const BodyMessage = styled.div`
 const Container = styled.div`
   height: calc(100vh - 100px - 40px);
   overflow-y: scroll;
+  border-radius: 5px;
 `
 
 const colorBasedOnBg = (bgColor: string, dark: string, light: string) => {
