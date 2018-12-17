@@ -11,7 +11,7 @@ export default gql`
 
   type Message {
     id: ID!
-    sender: String!
+    sender: User!
     text: String!
     createdAt: String!
     updatedAt: String!

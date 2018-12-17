@@ -8,14 +8,10 @@ export default {
   Query: {
     getMessages: async () => {
       const messages = await Message.find({})
+        .populate("sender")
+        .exec()
 
-      return messages.map(message => ({
-        id: message._id.toString(),
-        sender: message.sender.toString(),
-        text: message.text,
-        createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
-      }))
+      return messages
     },
   },
   Mutation: {
