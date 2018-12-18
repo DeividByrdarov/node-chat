@@ -68,16 +68,14 @@ class Messages extends React.Component<{
     const now = moment()
     const date = moment(message.createdAt)
 
-    const duration = moment.duration(now.diff(date, "hours"))
+    const diff = now.diff(date, "hours")
 
     return (
       <Message key={message.id} bgColor={message.sender.color}>
         <HeadMessage bgColor={message.sender.color}>
           {message.sender.username}{" "}
           <small>
-            {duration.days() > 0
-              ? date.format("YYYY-MM-DD HH:mm")
-              : date.fromNow()}
+            {diff > 24 ? date.format("YYYY-MM-DD HH:mm") : date.fromNow()}
           </small>
         </HeadMessage>
         <BodyMessage>{message.text}</BodyMessage>

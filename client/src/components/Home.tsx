@@ -98,6 +98,8 @@ class Home extends React.Component<RouteComponentProps> {
                           parseInt(newFeedItem.createdAt)
                         ).toISOString()
 
+                        this.state.scrollToBottom()
+
                         return Object.assign({}, prev, {
                           getMessages: [...prev.getMessages, newFeedItem],
                         })
