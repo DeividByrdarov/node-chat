@@ -44,6 +44,16 @@ export default {
           user,
         }
       }
+
+      return {
+        ok: false,
+        error: [
+          {
+            field: "*",
+            message: "Invalid credentials",
+          },
+        ],
+      }
     },
 
     register: async (parent, { email, username, password }, ctx) => {
