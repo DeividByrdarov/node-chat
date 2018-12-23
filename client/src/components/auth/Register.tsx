@@ -4,7 +4,15 @@ import { RouteComponentProps } from "react-router"
 import { Mutation, MutationFn } from "react-apollo"
 import gql from "graphql-tag"
 import { OperationVariables } from "apollo-boost"
-import { Form, Container, FormGroup, Submit, RegisterLink } from "./Login"
+import styled from "styled-components"
+import {
+  Form,
+  Container,
+  FormGroup,
+  Submit,
+  RegisterLink,
+  ErrorMessage,
+} from "./Login"
 
 const REGISTER_MUTATION = gql`
   mutation register($username: String!, $email: String!, $password: String!) {
@@ -26,11 +34,16 @@ class Register extends React.Component<RouteComponentProps> {
     username: "",
     email: "",
     password: "",
+    errors: { username: "", email: "", password: "" },
   }
 
   _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       [e.target.name]: e.target.value,
+      errors: {
+        ...this.state.errors,
+        [e.target.name]: "",
+      },
     })
   }
 
@@ -49,7 +62,7 @@ class Register extends React.Component<RouteComponentProps> {
         password,
       },
     })
-    console.log(result)
+
     if (result) {
       const {
         data: { register },
@@ -57,6 +70,14 @@ class Register extends React.Component<RouteComponentProps> {
       if (register.ok) {
         updateUser(register.user.id)
         this.props.history.replace("/")
+      } else {
+        const errors: { [name: string]: string } = {}
+        register.error.forEach((error: any) => {
+          errors[error.field] = error.message
+        })
+        this.setState({
+          errors,
+        })
       }
     }
   }
@@ -74,36 +95,61 @@ class Register extends React.Component<RouteComponentProps> {
               {register => (
                 <Form onSubmit={e => this._onSubmit(e, register, updateUser)}>
                   <Container>
-                    <FormGroup>
-                      <label htmlFor="username">Username</label>
-                      <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={this.state.username}
-                        onChange={this._onChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <label htmlFor="email">Email</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={this.state.email}
-                        onChange={this._onChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <label htmlFor="password">Password</label>
-                      <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={this.state.password}
-                        onChange={this._onChange}
-                      />
-                    </FormGroup>
+                    <div>
+                      <FormGroup>
+                        <label htmlFor="username">Username</label>
+                        <input
+                          type="text"
+                          id="username"
+                          name="username"
+                          value={this.state.username}
+                          onChange={this._onChange}
+                          className={`${this.state.errors.username &&
+                            "red-field"}`}
+                        />
+                      </FormGroup>
+                      {this.state.errors.username && (
+                        <ErrorMessage>
+                          {this.state.errors.username}
+                        </ErrorMessage>
+                      )}
+                    </div>
+                    <div>
+                      <FormGroup>
+                        <label htmlFor="email">Email</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={this.state.email}
+                          onChange={this._onChange}
+                          className={`${this.state.errors.email &&
+                            "red-field"}`}
+                        />
+                      </FormGroup>
+                      {this.state.errors.email && (
+                        <ErrorMessage>{this.state.errors.email}</ErrorMessage>
+                      )}
+                    </div>
+                    <div>
+                      <FormGroup>
+                        <label htmlFor="password">Password</label>
+                        <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          value={this.state.password}
+                          onChange={this._onChange}
+                          className={`${this.state.errors.password &&
+                            "red-field"}`}
+                        />
+                      </FormGroup>
+                      {this.state.errors.password && (
+                        <ErrorMessage>
+                          {this.state.errors.password}
+                        </ErrorMessage>
+                      )}
+                    </div>
 
                     <RegisterLink to="/login">
                       Already have account? Login!

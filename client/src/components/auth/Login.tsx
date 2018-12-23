@@ -35,7 +35,7 @@ export const Container = styled.div`
   padding: 20px;
   border: 4px solid #8e44ad;
   border-radius: 6px;
-  background-color: #9b59b6;
+  background-color: white;
 `
 
 export const FormGroup = styled.div`
@@ -43,7 +43,7 @@ export const FormGroup = styled.div`
   grid-template-columns: 1fr 300px;
   grid-gap: 20px;
   height: 30px;
-  color: white;
+  color: black;
 
   label {
     display: flex;
@@ -53,12 +53,34 @@ export const FormGroup = styled.div`
 
   input {
     outline: 0;
-    border: 1px solid white;
+    border: 2px solid #9b59b6;
     border-radius: 4px;
     padding: 0px 5px;
     font-size: 1rem;
     background-color: #34495e;
     color: white;
+
+    &.red-field {
+      animation-name: error-animation;
+      animation-duration: 0.5s;
+      animation-iteration-count: 1;
+      border-color: #e74c3c;
+    }
+  }
+
+  @keyframes error-animation {
+    25% {
+      transform: translateX(-10px);
+    }
+    50% {
+      transform: translateX(10px);
+    }
+    75% {
+      transform: translateX(-10px);
+    }
+    100% {
+      transform: translateX(0px);
+    }
   }
 `
 
@@ -85,27 +107,41 @@ export const Submit = styled.button`
 export const RegisterLink = styled(Link)`
   font-size: 0.8rem;
   text-decoration: none;
-  color: white;
+  color: black;
   cursor: pointer;
   text-align: end;
+`
+
+export const ErrorMessage = styled.p`
+  color: #e74c3c;
+  margin: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  max-width: 400px;
+  margin-top: 0.5rem;
 `
 
 class Login extends React.Component<RouteComponentProps> {
   state = {
     email: "",
     password: "",
+    errors: { "*": "", email: "", password: "" },
   }
 
   _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       [e.target.name]: e.target.value,
+      errors: {
+        ...this.state.errors,
+        [e.target.name]: "",
+      },
     })
   }
 
   _onSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
     loginMutation: MutationFn<any, OperationVariables>,
-    login: (id: string) => void
+    updateUser: (id: string) => void
   ) => {
     e.preventDefault()
     const { email, password } = this.state
@@ -117,9 +153,20 @@ class Login extends React.Component<RouteComponentProps> {
     })
 
     if (result) {
-      if (result.data.login.ok) {
-        login(result.data.login.user.id)
+      const {
+        data: { login },
+      } = result
+      if (login.ok) {
+        updateUser(login.user.id)
         this.props.history.push("/")
+      } else {
+        const errors: { [name: string]: string } = {}
+        login.error.forEach((error: any) => {
+          errors[error.field] = error.message
+        })
+        this.setState({
+          errors,
+        })
       }
     }
   }
@@ -139,26 +186,47 @@ class Login extends React.Component<RouteComponentProps> {
                   onSubmit={e => this._onSubmit(e, loginMutation, updateUser)}
                 >
                   <Container>
-                    <FormGroup>
-                      <label htmlFor="email">Email</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={this.state.email}
-                        onChange={this._onChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <label htmlFor="password">Password</label>
-                      <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={this.state.password}
-                        onChange={this._onChange}
-                      />
-                    </FormGroup>
+                    {this.state.errors["*"] && (
+                      <ErrorMessage style={{ marginTop: 0 }}>
+                        {this.state.errors["*"]}
+                      </ErrorMessage>
+                    )}
+                    <div>
+                      <FormGroup>
+                        <label htmlFor="email">Email</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={this.state.email}
+                          onChange={this._onChange}
+                          className={`${this.state.errors.email &&
+                            "red-field"}`}
+                        />
+                      </FormGroup>
+                      {this.state.errors.email && (
+                        <ErrorMessage>{this.state.errors.email}</ErrorMessage>
+                      )}
+                    </div>
+                    <div>
+                      <FormGroup>
+                        <label htmlFor="password">Password</label>
+                        <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          value={this.state.password}
+                          onChange={this._onChange}
+                          className={`${this.state.errors.password &&
+                            "red-field"}`}
+                        />
+                      </FormGroup>
+                      {this.state.errors.password && (
+                        <ErrorMessage>
+                          {this.state.errors.password}
+                        </ErrorMessage>
+                      )}
+                    </div>
 
                     <RegisterLink to="/register">
                       Don't have account? Register!
