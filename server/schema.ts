@@ -30,6 +30,11 @@ export default gql`
     error: [Error!]
   }
 
+  type OnlineUsers {
+    users: [String!]!
+    count: Int!
+  }
+
   type Error {
     field: String!
     message: String!
@@ -37,6 +42,7 @@ export default gql`
 
   type Query {
     getMessages: [Message!]!
+    onlineUsers: OnlineUsers!
   }
 
   type Mutation {

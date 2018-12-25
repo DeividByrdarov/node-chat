@@ -6,6 +6,8 @@ import stringHelper from "./helpers/string.helper"
 
 const MESSAGE_CREATED = "MESSAGE_CREATED"
 
+let onlineUsers = []
+
 export default {
   Query: {
     getMessages: async () => {
@@ -20,6 +22,12 @@ export default {
         createdAt: new Date(message.createdAt).toISOString(),
         updatedAt: new Date(message.updatedAt).toISOString(),
       }))
+    },
+    onlineUsers: () => {
+      return {
+        users: onlineUsers,
+        count: onlineUsers.length,
+      }
     },
   },
   Mutation: {
@@ -39,6 +47,8 @@ export default {
       }
 
       if (await compare(password, user.password)) {
+        onlineUsers.push(user.email)
+
         return {
           ok: true,
           user,
@@ -66,6 +76,8 @@ export default {
           password,
           color: "#" + (((1 << 24) * Math.random()) | 0).toString(16),
         })
+
+        onlineUsers.push(user.email)
       } catch (err) {
         let error = []
         Object.keys(err.errors).forEach(field => {
