@@ -13,15 +13,16 @@ import Home from "./components/Home"
 import Login from "./components/auth/Login"
 import Register from "./components/auth/Register"
 import Logout from "./components/auth/Logout"
+import config from "./config"
 
 // Create an http link:
 const httpLink = new HttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri: `http://${config.backendUrl}/graphql`,
 })
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:4000/graphql`,
+  uri: `ws://${config.backendUrl}/graphql`,
   options: {
     reconnect: true,
   },
