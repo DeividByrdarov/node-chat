@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose"
 import * as uniqueValidator from "mongoose-unique-validator"
-import { hash } from "bcrypt"
+import { hash } from "bcryptjs"
 
 const HASH_SALT = 10
 

@@ -1,7 +1,7 @@
 import User from "./models/User"
-import { hash, compare } from "bcrypt"
+import { hash, compare } from "bcryptjs"
 import Message from "./models/Message"
-import pubsub from "./config/PubSub"
+import pubsub from "./config/pubsub"
 import stringHelper from "./helpers/string.helper"
 
 const MESSAGE_CREATED = "MESSAGE_CREATED"

@@ -2,8 +2,8 @@
   "name": "node-chat",
   "version": "1.0.0",
   "scripts": {
-    "client": "cd client/ && yarn start",
-    "server": "nodemon --watch server --exec ts-node server/app.ts"
+    "client": "cd client/ && npm start",
+    "server": "cd server/ && npm start"
   },
   "author": "Deivid Byrdarov <deivid.byrdarov@gmail.com>",
   "repository": {
