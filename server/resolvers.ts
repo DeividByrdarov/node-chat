@@ -47,7 +47,7 @@ export default {
       }
 
       if (await compare(password, user.password)) {
-        onlineUsers.push(user.email)
+        onlineUsers.push(user._id.toString())
 
         return {
           ok: true,
@@ -74,10 +74,9 @@ export default {
           email,
           username,
           password,
-          color: "#" + (((1 << 24) * Math.random()) | 0).toString(16),
         })
 
-        onlineUsers.push(user.email)
+        onlineUsers.push(user._id.toString())
       } catch (err) {
         let error = []
         Object.keys(err.errors).forEach(field => {
@@ -97,6 +96,8 @@ export default {
         user,
       }
     },
+    logout: () => {},
+
     createMessage: async (parent, { sender, text }, ctx) => {
       if (!text) return false
       const message = await Message.create({ sender, text })

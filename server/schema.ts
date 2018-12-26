@@ -31,7 +31,7 @@ export default gql`
   }
 
   type OnlineUsers {
-    users: [String!]!
+    users: [ID!]!
     count: Int!
   }
 
@@ -52,6 +52,7 @@ export default gql`
       username: String!
       password: String!
     ): RegisterResponse!
+    logout: Boolean!
 
     createMessage(sender: String!, text: String!): Boolean!
   }

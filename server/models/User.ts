@@ -35,13 +35,14 @@ const schema = new mongoose.Schema(
             value.length >= 8 && /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(value)
           )
         },
-        message: props =>
+        message: () =>
           `Password must be atleast 8 characters and contain one lowercase letter, one uppercase letter and digit`,
       },
     },
     color: {
       type: String,
-      required: true,
+      default: "#" + (((1 << 24) * Math.random()) | 0).toString(16),
+      required: false,
     },
   },
   { timestamps: true }
